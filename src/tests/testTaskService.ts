@@ -20,7 +20,7 @@ import { TaskStatusEnum, TaskPriorityEnum } from '../types/electron';
     console.log('Created:', task);
   
     // 2. Get all tasks (no filter)
-    const allTasks = await getAllTasks({ priority: 'all', status: 'all' });
+    const allTasks = await getAllTasks({ priority: 'all', status: 'all', sortOrder: 'asc' });
     console.log('All Tasks:', allTasks);
   
     // 3. Update the task
@@ -37,7 +37,7 @@ import { TaskStatusEnum, TaskPriorityEnum } from '../types/electron';
     console.log('Deleted task with id:', task.id);
   
     // 5. Get all tasks after deletion
-    const afterDelete = await getAllTasks({ priority: 'all', status: 'all' });
+    const afterDelete = await getAllTasks({ priority: 'all', status: 'all', sortOrder: 'asc' });
     console.log('All Tasks after delete:', afterDelete);
   }
   

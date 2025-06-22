@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface NotificationProps {
   message: string;
   onClose: () => void;

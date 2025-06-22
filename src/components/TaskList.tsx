@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Task, TaskPriority, TaskStatus } from '../types/electron';
 import { useNotification } from './NotificationProvider';
@@ -38,25 +38,24 @@ export function TaskList({ priorityFilter, statusFilter, sortOrder }: TaskListPr
     }
   }, [priorityFilter, statusFilter, sortOrder, showNotification]);
 
-  // Fetch tasks on initial mount and when filter changes
+
   useEffect(() => {
     fetchTasks();
   }, [fetchTasks]);
 
-  // Listen for task creation events to refresh the list
   useEffect(() => {
     const cleanup = window.api.onTaskCreated(() => {
       console.log('Received task-created event, refreshing list...');
       fetchTasks();
     });
 
-    // Cleanup the listener when the component unmounts
+
     return () => {
       cleanup();
     };
   }, [fetchTasks]);
 
-  // Listen for task deletion events to refresh the list
+
   useEffect(() => {
     const cleanup = window.api.onTaskDeleted(() => {
       console.log('Received task-deleted event, refreshing list...');

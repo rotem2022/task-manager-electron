@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Task } from '../types/electron';
 import { useNotification } from './NotificationProvider';
@@ -25,7 +25,7 @@ export function TaskDetail() {
             errorMessage = messageParts[messageParts.length - 1].trim();
           }
           showNotification(errorMessage);
-          setTask(null); // Set task to null to show "Task not found"
+          setTask(null); 
         });
     }
   }, [id, showNotification]);
@@ -46,8 +46,8 @@ export function TaskDetail() {
       <p><strong>Description:</strong> {task.description || 'No description'}</p>
       <hr />
       <p><strong>Due Date:</strong> {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'Not set'}</p>
-      <p><strong>Created:</strong> {new Date(task.createdAt).toLocaleString()}</p>
-      <p><strong>Last Updated:</strong> {new Date(task.updatedAt).toLocaleString()}</p>
+      <p><strong>Created:</strong> {new Date(task.createdAt).toLocaleDateString()}</p>
+      <p><strong>Last Updated:</strong> {new Date(task.updatedAt).toLocaleDateString()}</p>
       <div className="form-buttons">
         <button type="button" onClick={handleEdit}>Edit Task</button>
         <button type="button" className="delete-button" onClick={handleDelete}>Delete Task</button>
