@@ -1,3 +1,4 @@
+import { TaskStatus } from '../types/electron';
 import prisma from './prismaService';
 
 export async function createTask(data: {
@@ -5,7 +6,7 @@ export async function createTask(data: {
   description?: string;
   dueDate?: Date;
   priority: string;
-  status: string;
+  status: TaskStatus;
   createdAt: Date;
   updatedAt: Date;
 }) {
@@ -16,12 +17,18 @@ export async function getAllTasks() {
   return prisma.task.findMany();
 }
 
+export async function getTaskById(id: number) {
+  return prisma.task.findUnique({
+    where: { id },
+  });
+}
+
 export async function updateTask(id: number, data: {
   title?: string;
   description?: string;
   dueDate?: Date;
   priority?: string;
-  status?: string;
+  status?: TaskStatus;
   updatedAt?: Date;
 }) {
   return prisma.task.update({

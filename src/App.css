@@ -40,3 +40,61 @@
 .read-the-docs {
   color: #888;
 }
+
+.task-list-container {
+  margin-top: 2rem;
+}
+
+.task-list-container h2 {
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.task-item {
+  list-style: none;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #333;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.task-item:hover {
+  background-color: #444;
+}
+
+.task-detail-container {
+  padding: 1rem 2rem;
+}
+
+.task-detail-container h1 {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #444;
+}
+
+.task-detail-container p {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.task-detail-container strong {
+  color: #a0a0a0;
+}
+
+.form-buttons {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.delete-button {
+  background-color: #5c1a1a;
+  color: #ffc2c2;
+}
+
+.delete-button:hover {
+  background-color: #8b2a2a;
+}

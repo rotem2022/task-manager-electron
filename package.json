@@ -2,25 +2,27 @@
   "name": "task-manager",
   "private": true,
   "version": "0.0.0",
+  "main": "dist-electron/electron-main.js",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "dev": "concurrently \"npm:watch:ts\" \"vite\"",
+    "watch:ts": "tsc -p tsconfig.node.json -w",
+    "build": "tsc -p tsconfig.node.json && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "build-main": "tsc -p tsconfig.json",
-    "electron": "npm run build-main && electron build/main/main/electron-main.js",
-    "test-prisma": "ts-node-esm src/services/testPrisma.ts"
+    "start": "electron ."
   },
   "dependencies": {
     "@prisma/client": "^6.10.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
+    "concurrently": "^8.2.2",
     "electron": "^36.4.0",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
