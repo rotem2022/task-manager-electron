@@ -5,20 +5,22 @@ import type { Task, TaskPriority, TaskStatus } from '../types/electron';
 interface TaskListProps {
   priorityFilter: TaskPriority | 'all';
   statusFilter: TaskStatus | 'all';
+  sortOrder: 'asc' | 'desc';
 }
 
-export function TaskList({ priorityFilter, statusFilter }: TaskListProps) {
+export function TaskList({ priorityFilter, statusFilter, sortOrder }: TaskListProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const navigate = useNavigate();
 
   const fetchTasks = useCallback(async () => {
-    console.log(`Fetching tasks with priority: ${priorityFilter} and status: ${statusFilter}`);
+    console.log(`Fetching tasks with priority: ${priorityFilter}, status: ${statusFilter}, sort: ${sortOrder}`);
     const allTasks = await window.api.getAllTasks({ 
       priority: priorityFilter, 
-      status: statusFilter 
+      status: statusFilter,
+      sortOrder: sortOrder,
     });
     setTasks(allTasks);
-  }, [priorityFilter, statusFilter]);
+  }, [priorityFilter, statusFilter, sortOrder]);
 
   // Fetch tasks on initial mount and when filter changes
   useEffect(() => {

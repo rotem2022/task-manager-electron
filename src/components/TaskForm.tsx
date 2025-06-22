@@ -17,6 +17,19 @@ export function TaskForm() {
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<TaskPriority>(TaskPriorityEnum.MEDIUM);
   const [status, setStatus] = useState<TaskStatus>(TaskStatusEnum.IN_PROGRESS);
+  const [dueDate, setDueDate] = useState(new Date());
+  const [dateError, setDateError] = useState('');
+
+  useEffect(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set to midnight to compare dates only
+
+    if (dueDate < today) {
+      setDateError('Due date cannot be in the past.');
+    } else {
+      setDateError('');
+    }
+  }, [dueDate]);
 
   useEffect(() => {
     if (isEditMode && id) {
@@ -27,6 +40,7 @@ export function TaskForm() {
           setDescription(task.description || '');
           setPriority(task.priority);
           setStatus(task.status);
+          setDueDate(new Date(task.dueDate));
         }
       });
     }
@@ -39,14 +53,15 @@ export function TaskForm() {
     try {
       if (isEditMode && id) {
         const taskId = parseInt(id, 10);
-        const taskData: TaskUpdatePayload = { title, description, priority, status };
+        const taskData: TaskUpdatePayload = { title, description, priority, status, dueDate };
         await window.api.updateTask(taskId, taskData);
       } else {
         await window.api.createTask({
           title,
           description,
           priority,
-          status: TaskStatusEnum.IN_PROGRESS,
+          status,
+          dueDate,
         });
       }
       navigate('/');
@@ -62,6 +77,7 @@ export function TaskForm() {
         placeholder="Add a title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        required
       />
       <input
         type="text"
@@ -69,6 +85,14 @@ export function TaskForm() {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
+      <input
+        type="date"
+        placeholder="Add a due date"
+        value={dueDate.toISOString().split('T')[0]}
+        onChange={(e) => setDueDate(new Date(e.target.value))}
+        required
+      />
+      {dateError && <p className="error-message">{dateError}</p>}
       
       {isEditMode && (
         <select value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)}>
@@ -90,7 +114,7 @@ export function TaskForm() {
 
       <div className="form-buttons">
         <button type="button" onClick={() => navigate(-1)}>Cancel</button>
-        <button type="submit">{isEditMode ? 'Update' : 'Create'}</button>
+        <button type="submit" disabled={!!dateError}>{isEditMode ? 'Update' : 'Create'}</button>
       </div>
     </form>
   );

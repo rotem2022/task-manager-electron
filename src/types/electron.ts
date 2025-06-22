@@ -22,7 +22,7 @@ export type Task = {
   description: string | null;
   status: TaskStatus;
   priority: TaskPriority;
-  dueDate: Date | null;
+  dueDate: Date;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -32,11 +32,12 @@ export type TaskUpdatePayload = Partial<Omit<Task, 'id' | 'createdAt' | 'updated
 export type TaskFilters = {
   priority: TaskPriority | 'all';
   status: TaskStatus | 'all';
+  sortOrder: 'asc' | 'desc';
 };
 
 export interface IpcApi {
   getAllTasks: (filters: TaskFilters) => Promise<Task[]>;
-  createTask: (data: { title: string; description: string, priority: TaskPriority, status: TaskStatus }) => Promise<Task>;
+  createTask: (data: { title: string; description: string; priority: TaskPriority; status: TaskStatus; dueDate: Date; }) => Promise<Task>;
   updateTask: (id: number, data: TaskUpdatePayload) => Promise<Task>;
   deleteTask: (id: number) => Promise<Task>;
   onTaskCreated: (callback: () => void) => (() => void);

@@ -21,7 +21,7 @@ model Task {
   id          Int       @id @default(autoincrement())
   title       String
   description String?
-  dueDate     DateTime?
+  dueDate     DateTime  @default(dbgenerated("CURRENT_TIMESTAMP + interval '7 day'"))
   priority    Priority
   status      Status
   createdAt   DateTime  @default(now())

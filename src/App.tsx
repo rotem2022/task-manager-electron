@@ -10,6 +10,7 @@ function App() {
   const navigate = useNavigate();
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<TaskStatus | 'all'>('all');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const handleCreateNewTask = () => {
     navigate('/new-task');
@@ -54,9 +55,24 @@ function App() {
                       ))}
                     </select>
                   </div>
+                  <div className="filter-container">
+                    <label htmlFor="sort-order">Sort by Due Date:</label>
+                    <select
+                      id="sort-order"
+                      value={sortOrder}
+                      onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+                    >
+                      <option value="asc">Ascending</option>
+                      <option value="desc">Descending</option>
+                    </select>
+                  </div>
                 </div>
               </header>
-              <TaskList priorityFilter={priorityFilter} statusFilter={statusFilter} />
+              <TaskList 
+                priorityFilter={priorityFilter} 
+                statusFilter={statusFilter} 
+                sortOrder={sortOrder}
+              />
             </>
           }
         />

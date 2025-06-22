@@ -12,6 +12,7 @@ export async function createTask(data: {
   description: string;
   priority: TaskPriority;
   status: TaskStatus;
+  dueDate: Date;
 }) {
   return prisma.task.create({ data });
 }
@@ -19,10 +20,11 @@ export async function createTask(data: {
 type TaskFilters = {
   priority: TaskPriority | 'all';
   status: TaskStatus | 'all';
+  sortOrder: 'asc' | 'desc';
 };
 
 export async function getAllTasks(filters: TaskFilters) {
-  const { priority, status } = filters;
+  const { priority, status, sortOrder } = filters;
   console.log(`[taskService] Received filters:`, filters);
 
   const where: Prisma.TaskWhereInput = {};
@@ -35,8 +37,15 @@ export async function getAllTasks(filters: TaskFilters) {
     where.status = status;
   }
 
-  console.log('[taskService] Executing findMany with where clause:', where);
-  return prisma.task.findMany({ where });
+  const orderBy: Prisma.TaskOrderByWithRelationInput = {
+    dueDate: sortOrder,
+  };
+
+  console.log('[taskService] Executing findMany with where clause:', where, 'and orderBy:', orderBy);
+  return prisma.task.findMany({ 
+    where,
+    orderBy,
+  });
 }
 
 export async function getTaskById(id: number) {
