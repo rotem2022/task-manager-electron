@@ -1,20 +1,29 @@
-import { TaskStatus } from '../types/electron';
+import { Task, Prisma } from '@prisma/client';
 import prisma from './prismaService';
+
+// We derive the types directly from the Prisma generated models.
+// This ensures that our frontend types always match the database schema.
+export type TaskPriority = Task['priority'];
+export type TaskStatus = Task['status'];
 
 export async function createTask(data: {
   title: string;
   description?: string;
   dueDate?: Date;
-  priority: string;
+  priority: TaskPriority;
   status: TaskStatus;
-  createdAt: Date;
-  updatedAt: Date;
 }) {
   return prisma.task.create({ data });
 }
 
-export async function getAllTasks() {
-  return prisma.task.findMany();
+export async function getAllTasks(priorityFilter?: TaskPriority | 'all') {
+  const where: Prisma.TaskWhereInput = {};
+
+  if (priorityFilter && priorityFilter !== 'all') {
+    where.priority = priorityFilter;
+  }
+
+  return prisma.task.findMany({ where });
 }
 
 export async function getTaskById(id: number) {
@@ -27,9 +36,8 @@ export async function updateTask(id: number, data: {
   title?: string;
   description?: string;
   dueDate?: Date;
-  priority?: string;
+  priority?: TaskPriority;
   status?: TaskStatus;
-  updatedAt?: Date;
 }) {
   return prisma.task.update({
     where: { id },

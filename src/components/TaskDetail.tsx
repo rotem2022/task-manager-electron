@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import type { Task } from '../types/electron.d';
+import { useParams, useNavigate } from 'react-router-dom';
+import type { Task } from '../types/electron';
 import '../App.css'; 
 
 export function TaskDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [task, setTask] = useState<Task | null | undefined>(undefined);
 
   useEffect(() => {
@@ -35,17 +36,24 @@ export function TaskDetail() {
       <p><strong>Created:</strong> {new Date(task.createdAt).toLocaleString()}</p>
       <p><strong>Last Updated:</strong> {new Date(task.updatedAt).toLocaleString()}</p>
       <div className="form-buttons">
+        <button type="button" onClick={handleEdit}>Edit Task</button>
         <button type="button" className="delete-button" onClick={handleDelete}>Delete Task</button>
-        <button type="button" onClick={() => window.api.closeCurrentWindow()}>Close</button>
+        <button type="button" onClick={() => navigate('/')}>Close</button>
       </div>
     </div>
+    
   );
+
+  function handleEdit() {
+    if (task) {
+      navigate(`/edit/${task.id}`);
+    }
+  }
 
   async function handleDelete() {
     if (task) {
-      // Optional: Add a confirmation dialog here
       await window.api.deleteTask(task.id);
-      // The main process will close the window
+      navigate('/'); // Navigate back to list after delete
     }
   }
 } 

@@ -1,17 +1,22 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import type { Task } from '../types/electron.d';
+import { useNavigate } from 'react-router-dom';
+import type { Task, TaskPriority } from '../types/electron';
 
+interface TaskListProps {
+  priorityFilter: TaskPriority | 'all';
+}
 
-export function TaskList() {
+export function TaskList({ priorityFilter }: TaskListProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const navigate = useNavigate();
 
   const fetchTasks = useCallback(async () => {
-    console.log('Fetching tasks...');
-    const allTasks = await window.api.getAllTasks();
+    console.log(`Fetching tasks with filter: ${priorityFilter}`);
+    const allTasks = await window.api.getAllTasks(priorityFilter);
     setTasks(allTasks);
-  }, []);
+  }, [priorityFilter]);
 
-  // Fetch tasks on initial mount
+  // Fetch tasks on initial mount and when filter changes
   useEffect(() => {
     fetchTasks();
   }, [fetchTasks]);
@@ -42,7 +47,7 @@ export function TaskList() {
   }, [fetchTasks]);
 
   const handleTaskClick = (taskId: number) => {
-    window.api.openTaskDetailWindow(taskId);
+    navigate(`/task/${taskId}`);
   };
 
   return (

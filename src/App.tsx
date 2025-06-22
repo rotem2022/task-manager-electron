@@ -1,15 +1,17 @@
-import { Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { TaskList } from './components/TaskList';
 import { TaskForm } from './components/TaskForm';
 import { TaskDetail } from './components/TaskDetail';
+import { TaskPriority, TaskPriorityEnum } from './types/electron';
 import './App.css';
 
 function App() {
+  const navigate = useNavigate();
+  const [priorityFilter, setPriorityFilter] = useState<TaskPriority | 'all'>('all');
 
   const handleCreateNewTask = () => {
-    // This will eventually open a new window
-    // For now, it will navigate to the new-task route
-    window.api.openNewTaskWindow();
+    navigate('/new-task');
   };
 
   return (
@@ -21,11 +23,26 @@ function App() {
             <>
               <header>
                 <h1>Task Manager</h1>
-                <button onClick={handleCreateNewTask} className="create-task-btn">
-                  Create New Task
-                </button>
+                <div className="header-controls">
+                  <button onClick={handleCreateNewTask} className="create-task-btn">
+                    Create New Task
+                  </button>
+                  <div className="filter-container">
+                    <label htmlFor="priority-filter">Filter by Priority:</label>
+                    <select
+                      id="priority-filter"
+                      value={priorityFilter}
+                      onChange={(e) => setPriorityFilter(e.target.value as TaskPriority | 'all')}
+                    >
+                      <option value="all">All</option>
+                      {Object.values(TaskPriorityEnum).map(p => (
+                        <option key={p} value={p}>{p}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </header>
-              <TaskList />
+              <TaskList priorityFilter={priorityFilter} />
             </>
           }
         />
@@ -41,6 +58,14 @@ function App() {
           }
         />
         <Route path="/task/:id" element={<TaskDetail />} />
+        <Route path="/edit/:id" element={
+          <>
+            <header>
+              <h1>Edit Task</h1>
+            </header>
+            <TaskForm />
+          </>
+        } />
       </Routes>
     </div>
   );

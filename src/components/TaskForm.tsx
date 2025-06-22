@@ -1,26 +1,57 @@
-import React, { useState } from 'react';
-import { TaskStatus } from '../types/electron';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import {
+  TaskStatus,
+  TaskPriority,
+  TaskUpdatePayload,
+  TaskStatusEnum,
+  TaskPriorityEnum,
+} from '../types/electron';
 
 export function TaskForm() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const isEditMode = Boolean(id);
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState('medium');
-  const [status, setStatus] = useState<TaskStatus>(TaskStatus.IN_PROGRESS); 
+  const [priority, setPriority] = useState<TaskPriority>(TaskPriorityEnum.MEDIUM);
+  const [status, setStatus] = useState<TaskStatus>(TaskStatusEnum.IN_PROGRESS);
+
+  useEffect(() => {
+    if (isEditMode && id) {
+      const taskId = parseInt(id, 10);
+      window.api.getTaskById(taskId).then(task => {
+        if (task) {
+          setTitle(task.title);
+          setDescription(task.description || '');
+          setPriority(task.priority);
+          setStatus(task.status);
+        }
+      });
+    }
+  }, [id, isEditMode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title) return;
 
     try {
-      await window.api.createTask({
-        title,
-        description,
-        priority,
-        status,
-      });
-      
+      if (isEditMode && id) {
+        const taskId = parseInt(id, 10);
+        const taskData: TaskUpdatePayload = { title, description, priority, status };
+        await window.api.updateTask(taskId, taskData);
+      } else {
+        await window.api.createTask({
+          title,
+          description,
+          priority,
+          status,
+        });
+      }
+      navigate('/');
     } catch (error) {
-      console.error('Failed to create task:', error);
+      console.error('Failed to save task:', error);
     }
   };
 
@@ -39,23 +70,25 @@ export function TaskForm() {
         onChange={(e) => setDescription(e.target.value)}
       />
       
-      <input
-        type="text"
-        placeholder="Add a status"
-        value={status}
-        onChange={(e) => setStatus(e.target.value as TaskStatus)}
-      />
+      <select value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)}>
+        {Object.values(TaskStatusEnum).map((s) => (
+          <option key={s} value={s}>
+            {s}
+          </option>
+        ))}
+      </select>
       
-      <input
-        type="text"
-        placeholder="Add a priority"
-        value={priority}
-        onChange={(e) => setPriority(e.target.value)}
-      />
+      <select value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)}>
+        {Object.values(TaskPriorityEnum).map((p) => (
+          <option key={p} value={p}>
+            {p}
+          </option>
+        ))}
+      </select>
 
       <div className="form-buttons">
-        <button type="button" onClick={() => window.api.closeCurrentWindow()}>Cancel</button>
-        <button type="submit">Create</button>
+        <button type="button" onClick={() => navigate(-1)}>Cancel</button>
+        <button type="submit">{isEditMode ? 'Update' : 'Create'}</button>
       </div>
     </form>
   );

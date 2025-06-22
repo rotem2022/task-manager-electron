@@ -31,97 +31,37 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-// IPC handlers
-ipcMain.handle('tasks:open-window', (event) => {
-  const parentWindow = BrowserWindow.fromWebContents(event.sender);
-  
-  const childWindow = new BrowserWindow({
-    width: 500,
-    height: 600,
-    parent: parentWindow ?? undefined,
-    modal: true,
-    show: false,
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js'),
-    },
-  });
-
-  childWindow.loadURL(`${VITE_DEV_SERVER_URL}/#/new-task`);
-  
-  childWindow.once('ready-to-show', () => {
-    childWindow.show();
-  });
-});
-
+// IPC handlers for data
 ipcMain.handle('tasks:create', async (_event, data) => {
   const newTask = await createTask(data);
+  const creatorWindow = BrowserWindow.fromWebContents(_event.sender);
 
   // Notify all windows that a task has been created
   for (const window of BrowserWindow.getAllWindows()) {
-    window.webContents.send('task-created');
+    if (window !== creatorWindow) { // Don't notify the window that created it
+      window.webContents.send('task-created');
+    }
   }
-
-  // Close the window that initiated the creation
-  const creatorWindow = BrowserWindow.fromWebContents(_event.sender);
-  creatorWindow?.close();
 
   return newTask;
 });
 
-ipcMain.handle('tasks:getAll', async () => {
-  return getAllTasks();
+ipcMain.handle('tasks:getAll', async (_event, priorityFilter) => {
+  return getAllTasks(priorityFilter);
 });
 
 ipcMain.handle('tasks:update', async (_event, id, data) => {
-  return updateTask(id, data);
+  const updatedTask = await updateTask(id, data);
+  // In a real app, you might want to send 'task-updated' event to all windows
+  return updatedTask;
 });
 
 ipcMain.handle('tasks:delete', async (_event, id: number) => {
   const deletedTask = await deleteTask(id);
-
-  // Notify all windows that a task has been deleted
-  for (const window of BrowserWindow.getAllWindows()) {
-    // We send the ID of the deleted task with the event
-    window.webContents.send('task-deleted', id);
-  }
-
-  // Close the window that initiated the deletion
-  const currentWindow = BrowserWindow.fromWebContents(_event.sender);
-  currentWindow?.close();
-
+  // The UI now handles navigation, so no need to close window from here
   return deletedTask;
 });
 
 ipcMain.handle('tasks:get-by-id', async (_event, id: number) => {
   return getTaskById(id);
-});
-
-ipcMain.handle('tasks:open-detail-window', (event, taskId: number) => {
-  const parentWindow = BrowserWindow.fromWebContents(event.sender);
-
-  const detailWindow = new BrowserWindow({
-    width: 600,
-    height: 400,
-    parent: parentWindow ?? undefined,
-    modal: true,
-    show: false,
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js'),
-    },
-  });
-
-  detailWindow.loadURL(`${VITE_DEV_SERVER_URL}/#/task/${taskId}`);
-  
-  detailWindow.once('ready-to-show', () => {
-    detailWindow.show();
-  });
-});
-
-ipcMain.handle('window:close', (event) => {
-  const windowToClose = BrowserWindow.fromWebContents(event.sender);
-  windowToClose?.close();
 });

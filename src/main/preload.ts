@@ -1,12 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { Task, TaskUpdatePayload, TaskStatus } from '../types/electron';
+import type { Task, TaskUpdatePayload, TaskStatus, TaskPriority } from '../types/electron';
 
 contextBridge.exposeInMainWorld('api', {
-  createTask: (data: { title: string; description: string, priority: string, status: TaskStatus  }) => 
+  createTask: (data: { title: string; description: string, priority: TaskPriority, status: TaskStatus  }) => 
     ipcRenderer.invoke('tasks:create', data),
   
-  getAllTasks: (): Promise<Task[]> => 
-    ipcRenderer.invoke('tasks:getAll'),
+  getAllTasks: (priorityFilter: TaskPriority | 'all'): Promise<Task[]> => 
+    ipcRenderer.invoke('tasks:getAll', priorityFilter),
   
   updateTask: (id: number, data: TaskUpdatePayload): Promise<Task> => 
     ipcRenderer.invoke('tasks:update', id, data),
@@ -14,24 +14,12 @@ contextBridge.exposeInMainWorld('api', {
   deleteTask: (id: number): Promise<Task> => 
     ipcRenderer.invoke('tasks:delete', id),
 
-  openNewTaskWindow: (): void => {
-    ipcRenderer.invoke('tasks:open-window');
-  },
-
   onTaskCreated: (callback: () => void) => {
     const listener = () => callback();
     ipcRenderer.on('task-created', listener);
     return () => {
       ipcRenderer.removeListener('task-created', listener);
     };
-  },
-
-  closeCurrentWindow: () => {
-    ipcRenderer.invoke('window:close');
-  },
-
-  openTaskDetailWindow: (taskId: number) => {
-    ipcRenderer.invoke('tasks:open-detail-window', taskId);
   },
 
   getTaskById: (id: number) => ipcRenderer.invoke('tasks:get-by-id', id),

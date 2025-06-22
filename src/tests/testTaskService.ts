@@ -4,14 +4,14 @@ import {
     updateTask,
     deleteTask,
   } from '../services/taskService';
-import { TaskStatus } from '../types/electron';
+import { TaskStatus,TaskPriority } from '../types/electron';
   
   async function testCRUD() {
     const task = await createTask({
       title: 'Test Task',
       description: 'Testing CRUD',
       dueDate: new Date(),
-      priority: 'medium',
+      priority: TaskPriority.MEDIUM,
       status: TaskStatus.IN_PROGRESS,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -24,7 +24,7 @@ import { TaskStatus } from '../types/electron';
     const updated = await updateTask(task.id, {
       title: 'Updated Task',
       status: TaskStatus.DONE,
-      priority: 'high',
+      priority: TaskPriority.HIGH,
       dueDate: new Date(),
       description: 'Updated description',
       updatedAt: new Date(),

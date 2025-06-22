@@ -11,13 +11,18 @@ enum Status {
   DONE
   CANCELLED
 }
+enum Priority{
+  HIGH
+  LOW
+  MEDIUM
+}
 
 model Task {
   id          Int       @id @default(autoincrement())
   title       String
   description String?
   dueDate     DateTime?
-  priority    String
+  priority    Priority
   status      Status
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
