@@ -3,12 +3,13 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import { TaskList } from './components/TaskList';
 import { TaskForm } from './components/TaskForm';
 import { TaskDetail } from './components/TaskDetail';
-import { TaskPriority, TaskPriorityEnum } from './types/electron';
+import { TaskPriority, TaskPriorityEnum, TaskStatus, TaskStatusEnum } from './types/electron';
 import './App.css';
 
 function App() {
   const navigate = useNavigate();
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<TaskStatus | 'all'>('all');
 
   const handleCreateNewTask = () => {
     navigate('/new-task');
@@ -40,9 +41,22 @@ function App() {
                       ))}
                     </select>
                   </div>
+                  <div className="filter-container">
+                    <label htmlFor="status-filter">Filter by Status:</label>
+                    <select
+                      id="status-filter"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value as TaskStatus | 'all')}
+                    >
+                      <option value="all">All</option>
+                      {Object.values(TaskStatusEnum).map(s => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </header>
-              <TaskList priorityFilter={priorityFilter} />
+              <TaskList priorityFilter={priorityFilter} statusFilter={statusFilter} />
             </>
           }
         />

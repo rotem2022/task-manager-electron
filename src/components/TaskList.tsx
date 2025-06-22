@@ -1,20 +1,24 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Task, TaskPriority } from '../types/electron';
+import type { Task, TaskPriority, TaskStatus } from '../types/electron';
 
 interface TaskListProps {
   priorityFilter: TaskPriority | 'all';
+  statusFilter: TaskStatus | 'all';
 }
 
-export function TaskList({ priorityFilter }: TaskListProps) {
+export function TaskList({ priorityFilter, statusFilter }: TaskListProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const navigate = useNavigate();
 
   const fetchTasks = useCallback(async () => {
-    console.log(`Fetching tasks with filter: ${priorityFilter}`);
-    const allTasks = await window.api.getAllTasks(priorityFilter);
+    console.log(`Fetching tasks with priority: ${priorityFilter} and status: ${statusFilter}`);
+    const allTasks = await window.api.getAllTasks({ 
+      priority: priorityFilter, 
+      status: statusFilter 
+    });
     setTasks(allTasks);
-  }, [priorityFilter]);
+  }, [priorityFilter, statusFilter]);
 
   // Fetch tasks on initial mount and when filter changes
   useEffect(() => {

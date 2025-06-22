@@ -46,7 +46,7 @@ export function TaskForm() {
           title,
           description,
           priority,
-          status,
+          status: TaskStatusEnum.IN_PROGRESS,
         });
       }
       navigate('/');
@@ -70,13 +70,15 @@ export function TaskForm() {
         onChange={(e) => setDescription(e.target.value)}
       />
       
-      <select value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)}>
-        {Object.values(TaskStatusEnum).map((s) => (
-          <option key={s} value={s}>
-            {s}
-          </option>
-        ))}
-      </select>
+      {isEditMode && (
+        <select value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)}>
+          {Object.values(TaskStatusEnum).map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+      )}
       
       <select value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)}>
         {Object.values(TaskPriorityEnum).map((p) => (

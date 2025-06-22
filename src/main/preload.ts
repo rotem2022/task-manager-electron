@@ -1,12 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { Task, TaskUpdatePayload, TaskStatus, TaskPriority } from '../types/electron';
+import type { Task, TaskUpdatePayload, TaskStatus, TaskPriority, TaskFilters } from '../types/electron';
 
 contextBridge.exposeInMainWorld('api', {
   createTask: (data: { title: string; description: string, priority: TaskPriority, status: TaskStatus  }) => 
     ipcRenderer.invoke('tasks:create', data),
   
-  getAllTasks: (priorityFilter: TaskPriority | 'all'): Promise<Task[]> => 
-    ipcRenderer.invoke('tasks:getAll', priorityFilter),
+  getAllTasks: (filters: TaskFilters): Promise<Task[]> => 
+    ipcRenderer.invoke('tasks:getAll', filters),
   
   updateTask: (id: number, data: TaskUpdatePayload): Promise<Task> => 
     ipcRenderer.invoke('tasks:update', id, data),

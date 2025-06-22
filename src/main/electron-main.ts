@@ -46,8 +46,8 @@ ipcMain.handle('tasks:create', async (_event, data) => {
   return newTask;
 });
 
-ipcMain.handle('tasks:getAll', async (_event, priorityFilter) => {
-  return getAllTasks(priorityFilter);
+ipcMain.handle('tasks:getAll', async (_event, filters) => {
+  return getAllTasks(filters);
 });
 
 ipcMain.handle('tasks:update', async (_event, id, data) => {

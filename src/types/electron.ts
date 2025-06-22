@@ -29,9 +29,13 @@ export type Task = {
 
 export type TaskUpdatePayload = Partial<Omit<Task, 'id' | 'createdAt' | 'updatedAt'>>;
 
+export type TaskFilters = {
+  priority: TaskPriority | 'all';
+  status: TaskStatus | 'all';
+};
 
 export interface IpcApi {
-  getAllTasks: (priorityFilter: TaskPriority | 'all') => Promise<Task[]>;
+  getAllTasks: (filters: TaskFilters) => Promise<Task[]>;
   createTask: (data: { title: string; description: string, priority: TaskPriority, status: TaskStatus }) => Promise<Task>;
   updateTask: (id: number, data: TaskUpdatePayload) => Promise<Task>;
   deleteTask: (id: number) => Promise<Task>;
