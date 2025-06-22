@@ -8,6 +8,7 @@ import {
   TaskPriorityEnum,
 } from '../types/electron';
 import { useNotification } from './NotificationProvider';
+import { TaskFormFields } from './TaskFormFields';
 
 export function TaskForm() {
   const { id } = useParams<{ id: string }>();
@@ -50,7 +51,7 @@ export function TaskForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title) return;
+    if (!title || dateError) return;
 
     try {
       if (isEditMode && id) {
@@ -78,52 +79,26 @@ export function TaskForm() {
     }
   };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Add a title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        required
-      />
-      <input
-        type="text"
-        placeholder="Add a description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <input
-        type="date"
-        placeholder="Add a due date"
-        value={dueDate.toISOString().split('T')[0]}
-        onChange={(e) => setDueDate(new Date(e.target.value))}
-        required
-      />
-      {dateError && <p className="error-message">{dateError}</p>}
-      
-      {isEditMode && (
-        <select value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)}>
-          {Object.values(TaskStatusEnum).map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
-      )}
-      
-      <select value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)}>
-        {Object.values(TaskPriorityEnum).map((p) => (
-          <option key={p} value={p}>
-            {p}
-          </option>
-        ))}
-      </select>
+  const handleCancel = () => {
+    navigate(-1);
+  };
 
-      <div className="form-buttons">
-        <button type="button" onClick={() => navigate(-1)}>Cancel</button>
-        <button type="submit" disabled={!!dateError}>{isEditMode ? 'Update' : 'Create'}</button>
-      </div>
-    </form>
+  return (
+    <TaskFormFields
+      title={title}
+      setTitle={setTitle}
+      description={description}
+      setDescription={setDescription}
+      dueDate={dueDate}
+      setDueDate={setDueDate}
+      priority={priority}
+      setPriority={setPriority}
+      status={status}
+      setStatus={setStatus}
+      isEditMode={isEditMode}
+      dateError={dateError}
+      handleSubmit={handleSubmit}
+      handleCancel={handleCancel}
+    />
   );
 }

@@ -2,7 +2,7 @@
 
 ## Application Description
 
-This is a desktop task management application  allows users to create, view, update, delete, and manage their tasks. The application provides a clean, single-page interface for a seamless user experience, with features like filtering by priority/status and sorting by due date.
+This is a desktop task management application  allows users to create, view, update, delete, and manage their tasks.
 
 ---
 
@@ -33,6 +33,7 @@ Create a file named `.env` and add the following line:
 
 ```
 DATABASE_URL="postgresql://user:password@localhost:5432/taskmanager?schema=public"
+VITE_DEV_SERVER_URL=http://localhost:5173
 ```
 
 **Note:** You can change the `user` and `password` to anything you like, but make sure to use the same credentials in the `docker-compose.yml` file.
@@ -90,7 +91,7 @@ The application is built on a robust and modern tech stack:
 - **Vite:** As a build tool and development server.
 - **TypeScript:** For static typing, improving code quality, and reducing bugs.
 - **Prisma:** As the ORM for interacting with the database.
-- **PostgreSQL:** A powerful, open-source relational database, run via Docker for easy setup.
+- **PostgreSQL:** The database for storing task data, run via Docker for easy setup.
 
 
 ## Known Limitations
@@ -98,4 +99,4 @@ The application is built on a robust and modern tech stack:
 - **No User Authentication:** The application is currently single-user and does not have a login or user management system.
 - **No Real-time Updates:** If the database is modified by another source, the UI will not update automatically. It only refreshes upon user actions.
 - **Basic UI/UX:** The user interface is functional but lacks advanced features like drag-and-drop, animations, or themes.
-אין ולידציה בבאק אנד
+- **Limited Backend Validation:** There is minimal validation on the backend for incoming data.

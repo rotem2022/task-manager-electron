@@ -1,8 +1,6 @@
 import { Task, Prisma } from '@prisma/client';
 import prisma from './prismaService';
 
-// We derive the types directly from the Prisma generated models.
-// This ensures that our frontend types always match the database schema.
 export type TaskPriority = Task['priority'];
 export type TaskStatus = Task['status'];
 export type { Task };

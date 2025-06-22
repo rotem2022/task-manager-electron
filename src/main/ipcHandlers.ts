@@ -57,7 +57,12 @@ export function registerIpcHandlers() {
 
   ipcMain.handle('tasks:delete', async (_event, id: number) => {
     try {
-      return await deleteTask(id);
+      const deletedTask = await deleteTask(id);
+      // Notify all windows that a task has been deleted
+      for (const window of BrowserWindow.getAllWindows()) {
+        window.webContents.send('task-deleted', id);
+      }
+      return deletedTask;
     } catch (error) {
       handleError(error, 'Failed to delete the task. Please check the database connection and try again.');
     }
