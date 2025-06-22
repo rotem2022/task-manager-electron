@@ -1,4 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron';
+import { Prisma } from '@prisma/client';
 import {
   createTask,
   getAllTasks,
@@ -28,6 +29,12 @@ export function registerIpcHandlers() {
 
       return newTask;
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        // P2002 is the error code for a unique constraint violation
+        if (error.code === 'P2002') {
+          handleError(error, `A task with the title "${data.title}" already exists. Please use a different title.`);
+        }
+      }
       handleError(error, 'Failed to create the task. Please check the database connection and try again.');
     }
   });
