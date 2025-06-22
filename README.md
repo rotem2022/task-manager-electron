@@ -20,25 +20,12 @@ To set up and run the project locally, follow these steps:
 First, clone the repository and install the required npm packages.
 
 ```bash
-git clone <repository-url>
-cd Task-Manager
+git clone https://github.com/rotem2022/task-manager-electron
+cd task-manager-electron
 npm install
 ```
 
-### 2. Set Up Environment Variables
-
-The application uses a PostgreSQL database managed by Prisma. You need to create a `.env` file in the root of the project with the database connection string.
-
-Create a file named `.env` and add the following line:
-
-```
-DATABASE_URL="postgresql://user:password@localhost:5432/taskmanager?schema=public"
-VITE_DEV_SERVER_URL=http://localhost:5173
-```
-
-**Note:** You can change the `user` and `password` to anything you like, but make sure to use the same credentials in the `docker-compose.yml` file.
-
-### 3. Start the Database
+### 2. Start the Database
 
 The project includes a `docker-compose.yml` file to easily run a PostgreSQL database in a Docker container.
 
@@ -48,7 +35,7 @@ docker-compose up -d
 
 This command will start the database container in the background.
 
-### 4. Run Database Migrations
+### 3. Run Database Migrations
 
 Once the database is running, apply the database schema using Prisma Migrate.
 
@@ -58,7 +45,7 @@ npx prisma migrate dev
 
 This will create the necessary tables and apply any pending migrations.
 
-### 5. Run the Application
+### 4. Run the Application
 
 Finally, start the application in development mode.
 
@@ -78,7 +65,7 @@ To create a production build of the application, run the following command:
 npm run build
 ```
 
-This command uses `vite build` to compile the React/TypeScript code and `vite-plugin-electron` to package the Electron main and preload scripts. The output will be located in the `dist` and `dist-electron` directories, ready for packaging with tools like Electron Builder or Electron Forge.
+This command uses `electron-builder` to create a distributable installer for your operating system. The final installation file (e.g., `.dmg` for macOS, `.exe` for Windows) will be located in the `release/` directory.
 
 ---
 
