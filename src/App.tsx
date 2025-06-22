@@ -71,8 +71,8 @@ function App() {
                           value={sortOrder}
                           onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
                         >
-                          <option value="asc">Date Ascending</option>
-                          <option value="desc">Date Descending</option>
+                          <option value="asc">Due Date Ascending</option>
+                          <option value="desc">Due Date Descending</option>
                         </select>
                       </div>
                     </div>
