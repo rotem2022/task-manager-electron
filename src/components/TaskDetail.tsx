@@ -1,21 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { Task } from '../types/electron';
+import { useNotification } from './NotificationProvider';
 import '../App.css'; 
 
 export function TaskDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { showNotification } = useNotification();
   const [task, setTask] = useState<Task | null | undefined>(undefined);
 
   useEffect(() => {
     if (id) {
       const taskId = parseInt(id, 10);
-      window.api.getTaskById(taskId).then(fetchedTask => {
-        setTask(fetchedTask);
-      });
+      window.api.getTaskById(taskId)
+        .then(fetchedTask => {
+          setTask(fetchedTask);
+        })
+        .catch(error => {
+          console.error('Failed to fetch task details:', error);
+          let errorMessage = 'An unknown error occurred.';
+          if (error instanceof Error) {
+            const messageParts = error.message.split('Error:');
+            errorMessage = messageParts[messageParts.length - 1].trim();
+          }
+          showNotification(errorMessage);
+          setTask(null); // Set task to null to show "Task not found"
+        });
     }
-  }, [id]);
+  }, [id, showNotification]);
 
   if (task === undefined) {
     return <div>Loading task details...</div>;
@@ -52,8 +65,18 @@ export function TaskDetail() {
 
   async function handleDelete() {
     if (task) {
-      await window.api.deleteTask(task.id);
-      navigate('/'); // Navigate back to list after delete
+      try {
+        await window.api.deleteTask(task.id);
+        navigate('/'); // Navigate back to list after delete
+      } catch (error) {
+        console.error('Failed to delete task:', error);
+        let errorMessage = 'An unknown error occurred.';
+        if (error instanceof Error) {
+          const messageParts = error.message.split('Error:');
+          errorMessage = messageParts[messageParts.length - 1].trim();
+        }
+        showNotification(errorMessage);
+      }
     }
   }
 } 

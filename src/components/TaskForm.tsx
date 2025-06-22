@@ -7,10 +7,12 @@ import {
   TaskStatusEnum,
   TaskPriorityEnum,
 } from '../types/electron';
+import { useNotification } from './NotificationProvider';
 
 export function TaskForm() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { showNotification } = useNotification();
   const isEditMode = Boolean(id);
 
   const [title, setTitle] = useState('');
@@ -67,6 +69,12 @@ export function TaskForm() {
       navigate('/');
     } catch (error) {
       console.error('Failed to save task:', error);
+      let errorMessage = 'An unknown error occurred.';
+      if (error instanceof Error) {
+        const messageParts = error.message.split('Error:');
+        errorMessage = messageParts[messageParts.length - 1].trim();
+      }
+      showNotification(errorMessage);
     }
   };
 

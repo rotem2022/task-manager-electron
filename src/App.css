@@ -105,3 +105,32 @@
   font-size: 0.9em;
   margin-top: 5px;
 }
+
+/* Notification Styles */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #ff4d4d;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+}
+
+.notification p {
+  margin: 0;
+  padding-right: 15px;
+}
+
+.notification .close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}

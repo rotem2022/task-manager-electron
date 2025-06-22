@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Task, TaskPriority, TaskStatus } from '../types/electron';
+import { useNotification } from './NotificationProvider';
 
 interface TaskListProps {
   priorityFilter: TaskPriority | 'all';
@@ -10,17 +11,32 @@ interface TaskListProps {
 
 export function TaskList({ priorityFilter, statusFilter, sortOrder }: TaskListProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const { showNotification } = useNotification();
 
   const fetchTasks = useCallback(async () => {
-    console.log(`Fetching tasks with priority: ${priorityFilter}, status: ${statusFilter}, sort: ${sortOrder}`);
-    const allTasks = await window.api.getAllTasks({ 
-      priority: priorityFilter, 
-      status: statusFilter,
-      sortOrder: sortOrder,
-    });
-    setTasks(allTasks);
-  }, [priorityFilter, statusFilter, sortOrder]);
+    setIsLoading(true);
+    try {
+      console.log(`Fetching tasks with priority: ${priorityFilter}, status: ${statusFilter}, sort: ${sortOrder}`);
+      const allTasks = await window.api.getAllTasks({ 
+        priority: priorityFilter, 
+        status: statusFilter,
+        sortOrder: sortOrder,
+      });
+      setTasks(allTasks);
+    } catch (error) {
+      console.error('Failed to fetch tasks:', error);
+      let errorMessage = 'An unknown error occurred.';
+      if (error instanceof Error) {
+        const messageParts = error.message.split('Error:');
+        errorMessage = messageParts[messageParts.length - 1].trim();
+      }
+      showNotification(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [priorityFilter, statusFilter, sortOrder, showNotification]);
 
   // Fetch tasks on initial mount and when filter changes
   useEffect(() => {
@@ -55,6 +71,15 @@ export function TaskList({ priorityFilter, statusFilter, sortOrder }: TaskListPr
   const handleTaskClick = (taskId: number) => {
     navigate(`/task/${taskId}`);
   };
+
+  if (isLoading) {
+    return (
+      <div className="task-list-container">
+        <h2>My Tasks</h2>
+        <p>Loading tasks...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="task-list-container">
