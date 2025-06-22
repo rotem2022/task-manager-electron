@@ -134,3 +134,36 @@
   line-height: 1;
   cursor: pointer;
 }
+
+/* Filter and Sort Panel */
+.header-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filters-panel {
+  background-color: #2a2a2a;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filters-toggle-btn {
+  background-color: #005f5f;
+}
+
+.filters-toggle-btn:hover {
+  background-color: #008080;
+}

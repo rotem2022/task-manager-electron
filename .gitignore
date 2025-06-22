@@ -39,3 +39,10 @@ dist-ssr
 
 # Docker
 .docker/
+
+# electron-builder output
+/release
+
+# Prisma
+/prisma/dev.db
+/prisma/dev.db-journal

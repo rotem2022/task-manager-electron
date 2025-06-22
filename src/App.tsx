@@ -12,6 +12,7 @@ function App() {
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<TaskStatus | 'all'>('all');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [showFilters, setShowFilters] = useState(false);
 
   const handleCreateNewTask = () => {
     navigate('/new-task');
@@ -29,46 +30,53 @@ function App() {
                   <h1>Task Manager</h1>
                   <div className="header-controls">
                     <button onClick={handleCreateNewTask} className="create-task-btn">
-                      Create New Task
+                      Create A New Task
                     </button>
-                    <div className="filter-container">
-                      <label htmlFor="priority-filter">Filter by Priority:</label>
-                      <select
-                        id="priority-filter"
-                        value={priorityFilter}
-                        onChange={(e) => setPriorityFilter(e.target.value as TaskPriority | 'all')}
-                      >
-                        <option value="all">All</option>
-                        {Object.values(TaskPriorityEnum).map(p => (
-                          <option key={p} value={p}>{p}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="filter-container">
-                      <label htmlFor="status-filter">Filter by Status:</label>
-                      <select
-                        id="status-filter"
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value as TaskStatus | 'all')}
-                      >
-                        <option value="all">All</option>
-                        {Object.values(TaskStatusEnum).map(s => (
-                          <option key={s} value={s}>{s}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="filter-container">
-                      <label htmlFor="sort-order">Sort by Due Date:</label>
-                      <select
-                        id="sort-order"
-                        value={sortOrder}
-                        onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
-                      >
-                        <option value="asc">Ascending</option>
-                        <option value="desc">Descending</option>
-                      </select>
-                    </div>
+                    <button onClick={() => setShowFilters(!showFilters)} className="filters-toggle-btn">
+                      {showFilters ? 'Hide' : 'Filters & Sort'}
+                    </button>
                   </div>
+                  {showFilters && (
+                    <div className="filters-panel">
+                      <div className="filter-container">
+                        <label htmlFor="priority-filter">Priority:</label>
+                        <select
+                          id="priority-filter"
+                          value={priorityFilter}
+                          onChange={(e) => setPriorityFilter(e.target.value as TaskPriority | 'all')}
+                        >
+                          <option value="all">All</option>
+                          {Object.values(TaskPriorityEnum).map(p => (
+                            <option key={p} value={p}>{p}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="filter-container">
+                        <label htmlFor="status-filter">Status:</label>
+                        <select
+                          id="status-filter"
+                          value={statusFilter}
+                          onChange={(e) => setStatusFilter(e.target.value as TaskStatus | 'all')}
+                        >
+                          <option value="all">All</option>
+                          {Object.values(TaskStatusEnum).map(s => (
+                            <option key={s} value={s}>{s}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="filter-container">
+                        <label htmlFor="sort-order">Sort By:</label>
+                        <select
+                          id="sort-order"
+                          value={sortOrder}
+                          onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+                        >
+                          <option value="asc">Date Ascending</option>
+                          <option value="desc">Date Descending</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
                 </header>
                 <TaskList 
                   priorityFilter={priorityFilter} 
