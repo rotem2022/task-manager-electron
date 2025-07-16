@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TaskPriority, TaskStatus, TaskPriorityEnum, TaskStatusEnum } from '../types/electron';
 
 interface TaskFormFieldsProps {
@@ -24,6 +24,10 @@ export function TaskFormFields({
   status, setStatus, isEditMode, dateError,
   handleSubmit, handleCancel
 }: TaskFormFieldsProps) {
+
+  const priorityOptions = useMemo(() => Object.values(TaskPriorityEnum), []);
+  const statusOptions = useMemo(() => Object.values(TaskStatusEnum), []);
+
   return (
     <form onSubmit={handleSubmit}>
       <input
@@ -50,7 +54,7 @@ export function TaskFormFields({
       
       {isEditMode && (
         <select value={status} onChange={(e) => setStatus(e.target.value as TaskStatus)}>
-          {Object.values(TaskStatusEnum).map((s) => (
+          {statusOptions.map((s) => (
             <option key={s} value={s}>
               {s}
             </option>
@@ -59,7 +63,7 @@ export function TaskFormFields({
       )}
       
       <select value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)}>
-        {Object.values(TaskPriorityEnum).map((p) => (
+        {priorityOptions.map((p) => (
           <option key={p} value={p}>
             {p}
           </option>

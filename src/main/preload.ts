@@ -14,8 +14,8 @@ contextBridge.exposeInMainWorld('api', {
   deleteTask: (id: number): Promise<Task> => 
     ipcRenderer.invoke('tasks:delete', id),
 
-  onTaskCreated: (callback: () => void) => {
-    const listener = () => callback();
+  onTaskCreated: (callback: (task: Task) => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, task: Task) => callback(task);
     ipcRenderer.on('task-created', listener);
     return () => {
       ipcRenderer.removeListener('task-created', listener);

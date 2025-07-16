@@ -18,9 +18,8 @@ export function TaskList({ priorityFilter, statusFilter, sortOrder }: TaskListPr
   const fetchTasks = useCallback(async () => {
     setIsLoading(true);
     try {
-      console.log(`Fetching tasks with priority: ${priorityFilter}, status: ${statusFilter}, sort: ${sortOrder}`);
-      const allTasks = await window.api.getAllTasks({ 
-        priority: priorityFilter, 
+      const allTasks = await window.api.getAllTasks({
+        priority: priorityFilter,
         status: statusFilter,
         sortOrder: sortOrder,
       });
@@ -44,32 +43,23 @@ export function TaskList({ priorityFilter, statusFilter, sortOrder }: TaskListPr
   }, [fetchTasks]);
 
   useEffect(() => {
-    const cleanup = window.api.onTaskCreated(() => {
-      console.log('Received task-created event, refreshing list...');
-      fetchTasks();
+    const cleanup = window.api.onTaskCreated((newTask: Task) => {
+      setTasks(tasks => [...tasks, newTask]);
     });
-
-
-    return () => {
-      cleanup();
-    };
-  }, [fetchTasks]);
+    return cleanup;
+  }, []);
 
 
   useEffect(() => {
-    const cleanup = window.api.onTaskDeleted(() => {
-      console.log('Received task-deleted event, refreshing list...');
-      fetchTasks();
+    const cleanup = window.api.onTaskDeleted((id) => {
+      setTasks(tasks => tasks.filter((task) => task.id !== id));
     });
+    return cleanup;
+  }, []);
 
-    return () => {
-      cleanup();
-    };
-  }, [fetchTasks]);
-
-  const handleTaskClick = (taskId: number) => {
+  const handleTaskClick = useCallback((taskId: number) => {
     navigate(`/task/${taskId}`);
-  };
+  }, [navigate]);
 
   if (isLoading) {
     return (

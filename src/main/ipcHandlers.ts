@@ -23,7 +23,7 @@ export function registerIpcHandlers() {
       // Notify all windows that a task has been created
       for (const window of BrowserWindow.getAllWindows()) {
         if (window !== creatorWindow) {
-          window.webContents.send('task-created');
+          window.webContents.send('task-created', newTask);
         }
       }
 

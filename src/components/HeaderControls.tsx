@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TaskPriority, TaskPriorityEnum, TaskStatus, TaskStatusEnum } from '../types/electron';
 
 interface HeaderControlsProps {
@@ -24,6 +24,10 @@ export function HeaderControls({
   sortOrder,
   setSortOrder,
 }: HeaderControlsProps) {
+  
+  const priorityOptions = useMemo(() => Object.values(TaskPriorityEnum), []);
+  const statusOptions = useMemo(() => Object.values(TaskStatusEnum), []);
+
   return (
     <header>
       <h1>Task Manager</h1>
@@ -45,7 +49,7 @@ export function HeaderControls({
               onChange={(e) => setPriorityFilter(e.target.value as TaskPriority | 'all')}
             >
               <option value="all">All</option>
-              {Object.values(TaskPriorityEnum).map(p => (
+              {priorityOptions.map(p => (
                 <option key={p} value={p}>{p}</option>
               ))}
             </select>
@@ -58,7 +62,7 @@ export function HeaderControls({
               onChange={(e) => setStatusFilter(e.target.value as TaskStatus | 'all')}
             >
               <option value="all">All</option>
-              {Object.values(TaskStatusEnum).map(s => (
+              {statusOptions.map(s => (
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>

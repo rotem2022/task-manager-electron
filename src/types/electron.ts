@@ -40,7 +40,7 @@ export interface IpcApi {
   createTask: (data: { title: string; description: string; priority: TaskPriority; status: TaskStatus; dueDate: Date; }) => Promise<Task>;
   updateTask: (id: number, data: TaskUpdatePayload) => Promise<Task>;
   deleteTask: (id: number) => Promise<Task>;
-  onTaskCreated: (callback: () => void) => (() => void);
+  onTaskCreated: (callback: (task: Task) => void) => (() => void);
   getTaskById: (id: number) => Promise<Task | null>;
   onTaskDeleted: (callback: (taskId: number) => void) => () => void;
 }
